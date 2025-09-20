@@ -1,5 +1,6 @@
 package com.mosbach.demo.data.impl;
 
+import com.mosbach.demo.data.api.User;
 import com.mosbach.demo.data.api.UserManager;
 
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.util.*;
 public class PropertyFileUserManagerImpl implements UserManager {
 
     String fileName;
-
+    List<User> users = new ArrayList<>();
     static PropertyFileUserManagerImpl propertyFileUserManager = null;
 
     private PropertyFileUserManagerImpl(String fileName) {
@@ -24,76 +25,108 @@ public class PropertyFileUserManagerImpl implements UserManager {
     }
 
 
+    void loadProperties() {
+        List<User> temp = new ArrayList<>();
+        users = new ArrayList<>();
+        Properties properties = new Properties();
+        try {
+            properties.load(Files.newInputStream(Paths.get(fileName)));
+            int i = 1;
+            while (properties.containsKey("User." + i + ".email")) {
+                temp.add(new UserImpl(
+                        properties.getProperty("User." + i + ".name"),
+                        properties.getProperty("User." + i + ".email"),
+                        properties.getProperty("User." + i + ".password"),
+                        properties.getProperty("User." + i + ".token")
+                ));
+                i++;
+            }
+            users = temp;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+            // TODO Add Logger
+        }
+    }
+    void storeProperties() {
+        Properties properties = new Properties();
+        int i = 1;
+        for (User u : users) {
+            properties.setProperty("User." + i +".email", u.getEmail());
+            properties.setProperty("User." + i +".password", u.getName());
+            properties.setProperty("User." + i +".name", u.getPassword());
+            properties.setProperty("User." + i +".token", u.getToken());
+            i++;
+        }
+        try {
+            properties.store(Files.newOutputStream(Paths.get(fileName)), "Writing all users to properties file");
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+            // TODO Add Logger
+        }
+    }
+
+    @Override
+    public boolean createUser(User user) {
+        loadProperties();
+        boolean found = false;
+        for (User u : users)
+            if (u.getEmail().equals(user.getEmail()))
+                found = true;
+        if (!found) {
+            user.setToken("OFF");
+            users.add(user);
+            storeProperties();
+            return true;
+        }
+        return false;
+    }
+
+
     @Override
     public String logUserOn(String emailFromLogon, String passwordFromLogon) {
 
-        Properties properties = new Properties();
-        Random random = new Random();
-        String userEmail = "";
-        String userPassword = "";
-        String userToken = "";
-        boolean userIsLoggedOn = false;
+        loadProperties();
         boolean found = false;
-
-        try {
-            properties.load(Files.newInputStream(Paths.get(fileName)));
-            int i = 1;
-            while (properties.containsKey("User." + i + ".email")) {
-                userEmail = properties.getProperty("User." + i + ".email");
-                userPassword = properties.getProperty("User." + i + ".password");
-                if (userPassword.equals(passwordFromLogon) && userEmail.equals(emailFromLogon)) {
-                    userToken = "" + System.nanoTime() + random.nextInt();
-                    properties.setProperty("User." + i + ".token", userToken);
-                    properties.setProperty("User." + i + ".isLoggedOn", "true");
-                    found = true;
-                }
-                i++;
+        String userToken = "OFF";
+        Random random = new Random();
+        for (User u : users)
+            if (u.getEmail().equals(emailFromLogon)) {
+                found = true;
+                userToken = "" + System.nanoTime() + random.nextInt();
+                u.setToken(userToken);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         if (found) {
-            try {
-                properties.store(Files.newOutputStream(Paths.get(fileName)), "Writing all users to properties file");
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            storeProperties();
             return userToken;
         }
-        else {
-            return "NOT-FOUND";
-        }
+        return "";
     }
-
 
     @Override
-    public String getUserFromToken(String tokenFromLogon) {
+    public boolean logUserOff(String email) {
 
-        Properties properties = new Properties();
-        String userPassword = "";
-        String userEmail = "";
-        String userToken = "";
-        boolean userIsLoggedOn = false;
-
-        try {
-            properties.load(Files.newInputStream(Paths.get(fileName)));
-            int i = 1;
-            while (properties.containsKey("User." + i + ".email")) {
-                userPassword = properties.getProperty("User." + i + ".password");
-                userToken = properties.getProperty("User." + i + ".token");
-                userEmail = properties.getProperty("User." + i + ".email");
-                userIsLoggedOn = Boolean.parseBoolean(properties.getProperty("User." + i + ".isLoggedOn"));
-                if (userToken.equals(tokenFromLogon) && userIsLoggedOn ) {
-                    return userEmail;
-                }
-                i++;
+        loadProperties();
+        boolean found = false;
+        for (User u : users)
+            if (u.getEmail().equals(email)) {
+                u.setToken("OFF");
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (found) {
+            storeProperties();
+            return true;
         }
-        return userToken;
+        return false;
     }
 
+    @Override
+    public String getUserEmailFromToken(String tokenFromLogon) {
+        loadProperties();
+        String userEmail = "";
+        for (User u : users)
+            if (u.getToken().equals(tokenFromLogon)) {
+                userEmail = u.getEmail();
+            }
+        return userEmail;
+    }
 }

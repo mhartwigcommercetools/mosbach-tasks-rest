@@ -33,14 +33,14 @@ public class TaskList {
 	public void setTasks() {
 		// TaskManager taskManager = PropertyFileTaskManagerImpl.getPropertyFileTaskManagerImpl("src/main/resources/TaskList.properties");
 		TaskManager taskManager = PostgresTaskManagerImpl.getPostgresTaskManagerImpl();
-		tasks = taskManager.getAllTasks("email");
+		// tasks = taskManager.getAllTasks("email");
 	}
 
 	@SuppressWarnings("deprecation")
 	public void addTask(Task task) {
 		// TaskManager taskManager = PropertyFileTaskManagerImpl.getPropertyFileTaskManagerImpl("src/main/resources/TaskList.properties");
 		TaskManager taskManager = PostgresTaskManagerImpl.getPostgresTaskManagerImpl();
-		taskManager.addTask(task, "meATtest.com");
+		// taskManager.addTask(task, "meATtest.com");
 
 		// Region euCentral = Region.getRegion(Regions.US_EAST_1);
 		// sqs.setRegion(euCentral);

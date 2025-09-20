@@ -1,8 +1,9 @@
 package com.mosbach.demo.data.impl;
 
+import com.mosbach.demo.data.api.Task;
 import com.mosbach.demo.data.api.TaskManager;
+import com.mosbach.demo.data.api.User;
 import com.mosbach.demo.model.student.Student;
-import com.mosbach.demo.model.task.Task;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,6 +16,7 @@ import java.util.Properties;
 public class PropertyFileTaskManagerImpl implements TaskManager {
 
     String fileName;
+    List<Task> tasks = new ArrayList<>();
 
     static PropertyFileTaskManagerImpl propertyFileTaskManager = null;
 
@@ -28,71 +30,34 @@ public class PropertyFileTaskManagerImpl implements TaskManager {
         return propertyFileTaskManager;
     }
 
-
-    @Override
-    public List<Task> getAllTasks(String email) {
-
-        List<Task> tasks = new ArrayList<>();
+    void loadProperties() {
+        List<Task> temp = new ArrayList<>();
+        tasks = new ArrayList<>();
         Properties properties = new Properties();
-
         try {
             properties.load(Files.newInputStream(Paths.get(fileName)));
             int i = 1;
-            while (properties.containsKey("Task." + i + ".name")) {
-                String taskName = properties.getProperty("Task." + i + ".name");
-                String taskModule = properties.getProperty("Task." + i + ".module");
-                String taskDeadline = properties.getProperty("Task." + i + ".deadline");
-                String taskRecipient = properties.getProperty("Task." + i + ".recipient");
-                String taskDescription = properties.getProperty("Task." + i + ".description");
-                String taskLocation = properties.getProperty("Task." + i + ".location");
-                int taskPriority = Integer.parseInt(properties.getProperty("Task." + i + ".priority"));
-                double taskGrade = Double.parseDouble(properties.getProperty("Task." + i + ".grade"));
-                int taskDurationInHourse = Integer.parseInt(properties.getProperty("Task." + i + ".durationInHours"));
-                String taskStatus = properties.getProperty("Task." + i + ".status");
-                tasks.add(new Task(taskName, taskModule, taskDeadline,
-                                    taskRecipient, taskDescription, taskLocation, null,
-                                    taskPriority, taskGrade, taskDurationInHourse, taskStatus
-                                    ));
+            while (properties.containsKey("Task." + i + ".email")) {
+                temp.add(new TaskImpl(
+                        properties.getProperty("Task." + i + ".name"),
+                        Integer.parseInt(properties.getProperty("Task." + i + ".priority")),
+                        properties.getProperty("Task." + i + ".email")
+                ));
                 i++;
             }
+            tasks = temp;
         } catch (IOException e) {
             throw new RuntimeException(e);
+            // TODO Add Logger
         }
-        return tasks;
     }
-
-
-
-
-    @Override
-    public void addTask(Task task, String studentEmail) {
-        Collection<Task> tasks = getAllTasks("whatever email");
-        tasks.add(task);
-        storeAllTasks(tasks, studentEmail);
-    }
-
-    @Override
-    public void deleteTask(String name, Student student) {
-
-    }
-
-
-    public void storeAllTasks(Collection<Task> tasks, String studentEmail) {
-
+    void storeProperties() {
         Properties properties = new Properties();
         int i = 1;
-        for(Task t : tasks) {
-            properties.setProperty("Task." + i + ".name", t.getName());
-            properties.setProperty("Task." + i + ".module", t.getModule());
-            properties.setProperty("Task." + i + ".deadline", t.getDeadline());
-            properties.setProperty("Task." + i + ".recipient", t.getRecipient());
-            properties.setProperty("Task." + i + ".description", t.getDescription());
-            properties.setProperty("Task." + i + ".location", t.getLocation());
-            properties.setProperty("Task." + i + ".priority", t.getPriority() + "");
-            properties.setProperty("Task." + i + ".grade", t.getGrade() + "");
-            properties.setProperty("Task." + i + ".durationInHours", t.getDurationInHours() + "");
-            properties.setProperty("Task." + i + ".status", t.getStatus());
-            properties.setProperty("Task." + i + ".email", studentEmail);
+        for (Task t : tasks) {
+            properties.setProperty("Task." + i +".email", t.getEmail());
+            properties.setProperty("Task." + i +".priority", "" + t.getPriority());
+            properties.setProperty("Task." + i +".name", t.getName());
             i++;
         }
         try {
@@ -100,8 +65,26 @@ public class PropertyFileTaskManagerImpl implements TaskManager {
         }
         catch (IOException e) {
             throw new RuntimeException(e);
+            // TODO Add Logger
         }
-
     }
 
+
+    @Override
+    public List<Task> getAllTasksPerEmail(String email) {
+        loadProperties();
+        List<Task> tasksForEmail = new ArrayList<>();
+        for (Task t : tasks)
+            if (t.getEmail().equals(email))
+                tasksForEmail.add(t);
+        return tasksForEmail;
+    }
+
+    @Override
+    public boolean addTask(Task task) {
+        loadProperties();
+        tasks.add(task);
+        storeProperties();
+        return true;
+    }
 }

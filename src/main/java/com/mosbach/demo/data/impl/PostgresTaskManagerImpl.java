@@ -3,7 +3,7 @@ package com.mosbach.demo.data.impl;
 import com.mosbach.demo.data.api.TaskManager;
 import com.mosbach.demo.model.student.Student;
 import com.mosbach.demo.model.task.Task;
-import org.apache.commons.dbcp.BasicDataSource;
+// import org.apache.commons.dbcp.BasicDataSource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,18 +42,15 @@ public class PostgresTaskManagerImpl implements TaskManager  {
         return postgresTaskManager;
     }
 
-    @Override
     public List<Task> getAllTasks(String email) {
         return null;
     }
 
-    @Override
     public void addTask(Task task, String studentEmail) {
         Statement stmt = null;
         Connection connection = null;
     }
 
-    @Override
     public void deleteTask(String name, Student student) {
     }
 
@@ -94,5 +91,15 @@ public class PostgresTaskManagerImpl implements TaskManager  {
             myLogger.info("Error " + e);
         }
 
+    }
+
+    @Override
+    public List<com.mosbach.demo.data.api.Task> getAllTasksPerEmail(String email) {
+        return List.of();
+    }
+
+    @Override
+    public boolean addTask(com.mosbach.demo.data.api.Task task) {
+        return false;
     }
 }

@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.mosbach'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '8'
+sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
@@ -24,6 +24,7 @@ dependencies {
 	
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk-sqs', version: '1.11.880'
 	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+	// implementation("javax.annotation:javax.annotation-api:1.0.1")
 }
 
 test {

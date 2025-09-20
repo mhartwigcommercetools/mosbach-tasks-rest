@@ -4,7 +4,7 @@ package com.mosbach.demo.model.task;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Generated;
+// import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "DurationInHours",
     "Status"
 })
-@Generated("jsonschema2pojo")
+//@Generated("jsonschema2pojo")
 public class Task {
 
     @JsonProperty("Name")

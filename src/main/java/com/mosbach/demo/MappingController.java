@@ -25,9 +25,9 @@ public class MappingController {
 
 
     TaskManager propertyFileTaskManager =
-            PropertyFileTaskManagerImpl.getPropertyFileTaskManagerImpl("src/main/resources/TaskList.properties");
+            PropertyFileTaskManagerImpl.getPropertyFileTaskManagerImpl("src/main/resources/tasks.properties");
     UserManager propertyFileUserManager =
-            PropertyFileUserManagerImpl.getPropertyFileUserManagerImpl("src/main/resources/Users.properties");
+            PropertyFileUserManagerImpl.getPropertyFileUserManagerImpl("src/main/resources/users.properties");
 
     @PostMapping(
             path = "/login",
@@ -70,13 +70,13 @@ public class MappingController {
 
         String token = tokenTask.getToken();
 
-        String userEmail = propertyFileUserManager.getUserFromToken(token);
+        String userEmail = propertyFileUserManager.getUserEmailFromToken(token);
         if (userEmail.length() > 2) {
             String name = tokenTask.getTask().getName();
             MessageAnswer myAnswer = new MessageAnswer();
             myAnswer.setMessage("Taskname " + name + " with token " + token);
             Student tempStudent = new Student("Tom", "Tom");
-            propertyFileTaskManager.addTask(tokenTask.getTask(), userEmail);
+            //propertyFileTaskManager.addTask(tokenTask.getTask(), userEmail);
             return
                     myAnswer;
         }
@@ -125,10 +125,12 @@ public class MappingController {
         // check token
         // TokenManager
 
-        final List<Task> allTasks = propertyFileTaskManager.getAllTasks(email);
+        // final List<Task> allTasks = propertyFileTaskManager.getAllTasks(email);
 
-        return allTasks;
+        return null;
     }
+
+
 
 
 

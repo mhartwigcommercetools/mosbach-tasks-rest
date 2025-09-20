@@ -3,7 +3,7 @@ package com.mosbach.demo.model.task;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
+//import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "Message"
 })
-@Generated("jsonschema2pojo")
 public class MessageAnswer {
 
     @JsonProperty("Message")

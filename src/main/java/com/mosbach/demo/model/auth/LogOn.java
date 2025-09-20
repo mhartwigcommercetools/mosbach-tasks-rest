@@ -2,13 +2,13 @@ package com.mosbach.demo.model.auth;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
+//import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Generated("jsonschema2pojo")
+//@Generated("jsonschema2pojo")
 public class LogOn {
 
     @JsonProperty("email")
