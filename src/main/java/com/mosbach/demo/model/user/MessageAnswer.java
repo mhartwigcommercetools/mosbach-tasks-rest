@@ -1,5 +1,5 @@
 
-package com.mosbach.demo.model.task;
+package com.mosbach.demo.model.user;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -8,35 +8,31 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "Token"
+    "message"
 })
-public class TokenAnswer {
+public class MessageAnswer {
 
-    @JsonProperty("Token")
-    private String token;
+    @JsonProperty("message")
+    private String message;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-    /**
-     * No args constructor for use in serialization
-     *
-     */
-    public TokenAnswer() {
+    public MessageAnswer() {
     }
 
-    public TokenAnswer(String token) {
+    public MessageAnswer(String message) {
         super();
-        this.token = token;
+        this.message = message;
     }
 
-    @JsonProperty("Token")
-    public String getToken() {
-        return token;
+    @JsonProperty("message")
+    public String getMessage() {
+        return message;
     }
 
-    @JsonProperty("Token")
-    public void setToken(String token) {
-        this.token = token;
+    @JsonProperty("message")
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @JsonAnyGetter
@@ -52,10 +48,10 @@ public class TokenAnswer {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(TokenAnswer.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(MessageAnswer.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("message");
         sb.append('=');
-        sb.append(((this.token == null)?"<null>":this.token));
+        sb.append(((this.message == null)?"<null>":this.message));
         sb.append(',');
         sb.append("additionalProperties");
         sb.append('=');

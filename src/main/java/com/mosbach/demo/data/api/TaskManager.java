@@ -1,7 +1,5 @@
 package com.mosbach.demo.data.api;
 
-import com.mosbach.demo.model.student.Student;
-
 
 import java.util.List;
 

@@ -2,14 +2,11 @@ package com.mosbach.demo.data.impl;
 
 import com.mosbach.demo.data.api.Task;
 import com.mosbach.demo.data.api.TaskManager;
-import com.mosbach.demo.data.api.User;
-import com.mosbach.demo.model.student.Student;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 

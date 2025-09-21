@@ -1,7 +1,7 @@
 package com.mosbach.demo.data.impl;
 
 import com.mosbach.demo.data.api.TaskManager;
-import com.mosbach.demo.model.student.Student;
+import com.mosbach.demo.model.user.User;
 import com.mosbach.demo.model.task.Task;
 // import org.apache.commons.dbcp.BasicDataSource;
 
@@ -51,7 +51,7 @@ public class PostgresTaskManagerImpl implements TaskManager  {
         Connection connection = null;
     }
 
-    public void deleteTask(String name, Student student) {
+    public void deleteTask(String name, User student) {
     }
 
     public void createTableTask() {

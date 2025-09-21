@@ -2,27 +2,27 @@ package com.mosbach.demo.model.task;
 
 import com.mosbach.demo.data.api.TaskManager;
 import com.mosbach.demo.data.impl.PostgresTaskManagerImpl;
-import com.mosbach.demo.model.student.Student;
+import com.mosbach.demo.model.user.User;
 
 
 import java.util.Collection;
 
 public class TaskList {
 	
-	private Student student;
+	private User student;
 	private Collection<Task> tasks;
 
 	public TaskList() { }
 
-	public TaskList(Student student) {
+	public TaskList(User student) {
 		this.student = student;
 	}
 
-	public Student getStudent() {
+	public User getStudent() {
 		return student;
 	}
 
-	public void setStudent(Student student) {
+	public void setStudent(User student) {
 		this.student = student;
 	}
 

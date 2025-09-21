@@ -5,12 +5,15 @@ import com.mosbach.demo.data.api.UserManager;
 import com.mosbach.demo.data.impl.PostgresTaskManagerImpl;
 import com.mosbach.demo.data.impl.PropertyFileTaskManagerImpl;
 import com.mosbach.demo.data.impl.PropertyFileUserManagerImpl;
+import com.mosbach.demo.data.impl.UserImpl;
 import com.mosbach.demo.model.alexa.AlexaRO;
 import com.mosbach.demo.model.alexa.OutputSpeechRO;
 import com.mosbach.demo.model.alexa.ResponseRO;
-import com.mosbach.demo.model.auth.LogOn;
-import com.mosbach.demo.model.student.Student;
+import com.mosbach.demo.model.user.Token;
+import com.mosbach.demo.model.user.TokenAnswer;
+import com.mosbach.demo.model.user.User;
 import com.mosbach.demo.model.task.*;
+import com.mosbach.demo.model.user.UserWithName;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -34,27 +37,82 @@ public class MappingController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
     @ResponseStatus(HttpStatus.OK)
-    public TokenAnswer loginUser(@RequestBody LogOn logOn) {
+    public TokenAnswer loginUser(@RequestBody User user) {
 
-        Logger myLogger = Logger.getLogger("UserLogOn");
-        myLogger.info("Received a POST request on logon with email " + logOn.getEmail());
+        Logger myLogger = Logger.getLogger("UserLoggingOn");
+        myLogger.info("Received a POST request on login with email " + user.getEmail());
 
-        String email = logOn.getEmail();
-        String password = logOn.getPassword();
+        String token = propertyFileUserManager.logUserOn(user.getEmail(), user.getPassword());
+        myLogger.info("Token generated " + token);
 
-        String token = propertyFileUserManager.logUserOn(email, password);
-        myLogger.info("token generated " + token);
+        TokenAnswer tokenAnswer = new TokenAnswer(token,"200");
 
-        TokenAnswer myAnswer = new TokenAnswer();
-        if (token.equals("NOT-FOUND")) {
-            myAnswer.setToken("We could not log you in.");
-        }
-        else {
-            myAnswer.setToken("We logged you on with token " + token);
-        }
+        // TODO
+        // Fehlerfall behandeln
+
         return
-                myAnswer;
+                tokenAnswer;
     }
+
+
+    @DeleteMapping(
+            path = "/login",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public com.mosbach.demo.model.user.MessageAnswer loginUser(@RequestBody Token token) {
+
+        Logger myLogger = Logger.getLogger("UserLoggingOff");
+        myLogger.info("Received a DELETE request on login with token " + token.getToken());
+
+        boolean couldLogoffUser =
+                propertyFileUserManager.logUserOff(propertyFileUserManager.getUserEmailFromToken(token));
+
+        myLogger.info("User logged off " + couldLogoffUser);
+
+        com.mosbach.demo.model.user.MessageAnswer messageAnswer = new com.mosbach.demo.model.user.MessageAnswer("User logged out.");
+
+        // TODO
+        // Fehlerfall behandeln
+
+        return
+                messageAnswer;
+    }
+
+
+    @PostMapping(
+            path = "/user",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public com.mosbach.demo.model.user.MessageAnswer loginUser(@RequestBody UserWithName userWithName) {
+
+        Logger myLogger = Logger.getLogger("UserLoggingOn");
+        myLogger.info("Received a POST request on login with email " + userWithName.getEmail());
+
+        boolean couldCreateUser = propertyFileUserManager
+                        .createUser(
+                            new UserImpl(
+                                    userWithName.getName(),
+                                    userWithName.getEmail(),
+                                    userWithName.getPassword(),
+                                    "OFF"
+                            )
+                        );
+        myLogger.info("User created " + couldCreateUser);
+
+        com.mosbach.demo.model.user.MessageAnswer messageAnswer = new com.mosbach.demo.model.user.MessageAnswer("User created.");
+
+        // TODO
+        // Fehlerfall behandeln
+
+        return
+                messageAnswer;
+    }
+
+
+
+
 
 
 
@@ -75,7 +133,7 @@ public class MappingController {
             String name = tokenTask.getTask().getName();
             MessageAnswer myAnswer = new MessageAnswer();
             myAnswer.setMessage("Taskname " + name + " with token " + token);
-            Student tempStudent = new Student("Tom", "Tom");
+            User tempStudent = new User("Tom", "Tom");
             //propertyFileTaskManager.addTask(tokenTask.getTask(), userEmail);
             return
                     myAnswer;
