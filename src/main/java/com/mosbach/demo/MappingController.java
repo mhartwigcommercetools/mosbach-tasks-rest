@@ -2,10 +2,7 @@ package com.mosbach.demo;
 
 import com.mosbach.demo.data.api.TaskManager;
 import com.mosbach.demo.data.api.UserManager;
-import com.mosbach.demo.data.impl.PostgresTaskManagerImpl;
-import com.mosbach.demo.data.impl.PropertyFileTaskManagerImpl;
-import com.mosbach.demo.data.impl.PropertyFileUserManagerImpl;
-import com.mosbach.demo.data.impl.UserImpl;
+import com.mosbach.demo.data.impl.*;
 import com.mosbach.demo.model.alexa.AlexaRO;
 import com.mosbach.demo.model.alexa.OutputSpeechRO;
 import com.mosbach.demo.model.alexa.ResponseRO;
@@ -18,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -66,7 +64,7 @@ public class MappingController {
         myLogger.info("Received a DELETE request on login with token " + token.getToken());
 
         boolean couldLogoffUser =
-                propertyFileUserManager.logUserOff(propertyFileUserManager.getUserEmailFromToken(token));
+                propertyFileUserManager.logUserOff(propertyFileUserManager.getUserEmailFromToken(token.getToken()));
 
         myLogger.info("User logged off " + couldLogoffUser);
 
@@ -111,40 +109,62 @@ public class MappingController {
     }
 
 
-
-
-
-
-
     @PostMapping(
-            path = "/hszg-tasks",
+            path = "/task",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
     @ResponseStatus(HttpStatus.OK)
-    public MessageAnswer createTask(@RequestBody TokenTask tokenTask) {
+    public com.mosbach.demo.model.user.MessageAnswer loginUser(@RequestBody TokenTask tokenTask) {
 
-        Logger myLogger = Logger.getLogger("CreateTaskLogger");
-        myLogger.info("Received a POST request on hszg-tasks with token " + tokenTask.getToken());
+        Logger myLogger = Logger.getLogger("UserLoggingOn");
+        myLogger.info("Received a POST request on task with email " + tokenTask.getToken());
 
-        String token = tokenTask.getToken();
+        String email = propertyFileUserManager.getUserEmailFromToken(tokenTask.getToken());
+        boolean couldCreateTask = propertyFileTaskManager
+                .addTask(
+                        new TaskImpl(
+                                tokenTask.getTask().getName(),
+                                tokenTask.getTask().getPriority(),
+                                email
+                        )
+                );
 
-        String userEmail = propertyFileUserManager.getUserEmailFromToken(token);
-        if (userEmail.length() > 2) {
-            String name = tokenTask.getTask().getName();
-            MessageAnswer myAnswer = new MessageAnswer();
-            myAnswer.setMessage("Taskname " + name + " with token " + token);
-            User tempStudent = new User("Tom", "Tom");
-            //propertyFileTaskManager.addTask(tokenTask.getTask(), userEmail);
-            return
-                    myAnswer;
-        }
-        else {
-            MessageAnswer myAnswer = new MessageAnswer();
-            myAnswer.setMessage("Log on, you dummy!");
-            return
-                    myAnswer;
-        }
+        myLogger.info("User created " + couldCreateTask);
+
+        com.mosbach.demo.model.user.MessageAnswer messageAnswer = new com.mosbach.demo.model.user.MessageAnswer("User created.");
+
+        // TODO
+        // Fehlerfall behandeln
+
+        return
+                messageAnswer;
     }
+
+    @GetMapping("/task")
+    public TaskList getTasks(@RequestParam(value = "token", defaultValue = "123") String token) {
+
+        Logger myLogger = Logger.getLogger("TaskLogger");
+        myLogger.info("Received a GET request on task with token " + token);
+
+        String email = propertyFileUserManager.getUserEmailFromToken(token);
+        List<com.mosbach.demo.data.api.Task> tasks = propertyFileTaskManager.getAllTasksPerEmail(email);
+        List<Task> result = new ArrayList<>();
+        for (com.mosbach.demo.data.api.Task t : tasks)
+            result.add(new Task(t.getName(), t.getPriority()));
+        TaskList tl = new TaskList(result);
+
+        // TODO
+        // Fehlerfall behandeln
+
+        return
+                tl;
+    }
+
+
+
+
+
+
 
 
 
@@ -169,26 +189,6 @@ public class MappingController {
         return
                 prepareResponse(alexaRO, myAnswer, true);
     }
-
-
-
-
-    @GetMapping("/hszg-tasks")
-    public List<Task> getTasks(@RequestParam(value = "email", defaultValue = "email") String email,
-                             @RequestParam(value = "token", defaultValue = "123") String token) {
-
-        Logger myLogger = Logger.getLogger("GetTaskLogger");
-        myLogger.info("Received a GET request on hszg-tasks with token " + token);
-
-        // check token
-        // TokenManager
-
-        // final List<Task> allTasks = propertyFileTaskManager.getAllTasks(email);
-
-        return null;
-    }
-
-
 
 
 

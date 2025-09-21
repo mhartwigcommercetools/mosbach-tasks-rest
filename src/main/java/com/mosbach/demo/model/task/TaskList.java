@@ -1,63 +1,64 @@
+
 package com.mosbach.demo.model.task;
 
-import com.mosbach.demo.data.api.TaskManager;
-import com.mosbach.demo.data.impl.PostgresTaskManagerImpl;
-import com.mosbach.demo.model.user.User;
+import com.fasterxml.jackson.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.Collection;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+    "tasks"
+})
 public class TaskList {
-	
-	private User student;
-	private Collection<Task> tasks;
+    @JsonProperty("tasks")
+    private List<Task> tasks;
+    @JsonIgnore
+    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-	public TaskList() { }
+    public TaskList() {
+    }
 
-	public TaskList(User student) {
-		this.student = student;
-	}
+    public TaskList(List<Task> tasks) {
+        super();
+        this.tasks = tasks;
+    }
 
-	public User getStudent() {
-		return student;
-	}
+    @JsonProperty("tasks")
+    public List<Task> getTasks() {
+        return tasks;
+    }
 
-	public void setStudent(User student) {
-		this.student = student;
-	}
+    @JsonProperty("tasks")
+    public void setTask(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 
-	public Collection<Task> getTasks() {
-		return tasks;
-	}
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
 
-	public void setTasks() {
-		// TaskManager taskManager = PropertyFileTaskManagerImpl.getPropertyFileTaskManagerImpl("src/main/resources/TaskList.properties");
-		TaskManager taskManager = PostgresTaskManagerImpl.getPostgresTaskManagerImpl();
-		// tasks = taskManager.getAllTasks("email");
-	}
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+        this.additionalProperties.put(name, value);
+    }
 
-	@SuppressWarnings("deprecation")
-	public void addTask(Task task) {
-		// TaskManager taskManager = PropertyFileTaskManagerImpl.getPropertyFileTaskManagerImpl("src/main/resources/TaskList.properties");
-		TaskManager taskManager = PostgresTaskManagerImpl.getPostgresTaskManagerImpl();
-		// taskManager.addTask(task, "meATtest.com");
-
-		// Region euCentral = Region.getRegion(Regions.US_EAST_1);
-		// sqs.setRegion(euCentral);
-        // .withDelaySeconds(1);    
-		
-/*	
-		AWSCredentials awsCredentials = new SimpleAWSCredentials();         
-		AmazonSQS sqs = new AmazonSQSClient(awsCredentials);
-		
-		SendMessageRequest send_msg_request = new SendMessageRequest()
-		        .withQueueUrl("https://sqs.us-east-1.amazonaws.com/887927861730/Mosbach-task-organizer-Created-new-task")
-		        .withMessageBody("Added the following task: " + task.getName() + " with priority: " + task.getPriority());
-		sqs.sendMessage(send_msg_request);
-*/	
-		
-		
-	}
-
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(TaskList.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append("additionalProperties");
+        sb.append('=');
+        sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
+        sb.append(',');
+        if (sb.charAt((sb.length()- 1)) == ',') {
+            sb.setCharAt((sb.length()- 1), ']');
+        } else {
+            sb.append(']');
+        }
+        return sb.toString();
+    }
 
 }
