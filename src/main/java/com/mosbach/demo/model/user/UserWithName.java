@@ -7,16 +7,16 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "email","password","name"
+        "email","password","username"
 })
 public class UserWithName {
 
     @JsonProperty("email")
-    private String email;
+    private String email = "";
     @JsonProperty("password")
-    private String password;
+    private String password = "";
     @JsonProperty("name")
-    private String name;
+    private String name = "";
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -56,7 +56,7 @@ public class UserWithName {
     }
 
     @JsonProperty("name")
-    public void setName(String password) {
+    public void setName(String name) {
         this.name = name;
     }
 

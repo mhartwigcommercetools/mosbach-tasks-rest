@@ -52,8 +52,8 @@ public class PropertyFileUserManagerImpl implements UserManager {
         int i = 1;
         for (User u : users) {
             properties.setProperty("User." + i +".email", u.getEmail());
-            properties.setProperty("User." + i +".password", u.getName());
-            properties.setProperty("User." + i +".name", u.getPassword());
+            properties.setProperty("User." + i +".password", u.getPassword());
+            properties.setProperty("User." + i +".name", u.getName());
             properties.setProperty("User." + i +".token", u.getToken());
             i++;
         }
@@ -110,6 +110,7 @@ public class PropertyFileUserManagerImpl implements UserManager {
         boolean found = false;
         for (User u : users)
             if (u.getEmail().equals(email)) {
+                found = true;
                 u.setToken("OFF");
             }
         if (found) {

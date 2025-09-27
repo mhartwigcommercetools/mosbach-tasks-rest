@@ -58,7 +58,7 @@ public class MappingController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
     @ResponseStatus(HttpStatus.OK)
-    public com.mosbach.demo.model.user.MessageAnswer loginUser(@RequestBody Token token) {
+    public com.mosbach.demo.model.user.MessageAnswer logOffUser(@RequestBody Token token) {
 
         Logger myLogger = Logger.getLogger("UserLoggingOff");
         myLogger.info("Received a DELETE request on login with token " + token.getToken());
@@ -83,10 +83,10 @@ public class MappingController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
     @ResponseStatus(HttpStatus.OK)
-    public com.mosbach.demo.model.user.MessageAnswer loginUser(@RequestBody UserWithName userWithName) {
+    public com.mosbach.demo.model.user.MessageAnswer createUser(@RequestBody UserWithName userWithName) {
 
-        Logger myLogger = Logger.getLogger("UserLoggingOn");
-        myLogger.info("Received a POST request on login with email " + userWithName.getEmail());
+        Logger myLogger = Logger.getLogger("UserCreate");
+        myLogger.info("Received a POST request on user with email " + userWithName.getEmail());
 
         boolean couldCreateUser = propertyFileUserManager
                         .createUser(
@@ -116,7 +116,7 @@ public class MappingController {
     @ResponseStatus(HttpStatus.OK)
     public com.mosbach.demo.model.user.MessageAnswer loginUser(@RequestBody TokenTask tokenTask) {
 
-        Logger myLogger = Logger.getLogger("UserLoggingOn");
+        Logger myLogger = Logger.getLogger("AddTask");
         myLogger.info("Received a POST request on task with email " + tokenTask.getToken());
 
         String email = propertyFileUserManager.getUserEmailFromToken(tokenTask.getToken());
@@ -129,9 +129,9 @@ public class MappingController {
                         )
                 );
 
-        myLogger.info("User created " + couldCreateTask);
+        myLogger.info("Task created " + couldCreateTask);
 
-        com.mosbach.demo.model.user.MessageAnswer messageAnswer = new com.mosbach.demo.model.user.MessageAnswer("User created.");
+        com.mosbach.demo.model.user.MessageAnswer messageAnswer = new com.mosbach.demo.model.user.MessageAnswer("Task created.");
 
         // TODO
         // Fehlerfall behandeln
